@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    language=C,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red}
+}
+
+\title{Operating Systems Lab Assignment 7: Synchronization and Scheduling}
+\author{Christian Clarke}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+This report covers the synchronization and scheduling lab using POSIX threads, mutexes, and condition variables.
+
+\section{Exercise 1: Hello World}
+\lstinputlisting{hello_world.c}
+\textbf{Explanation:} The child thread increments the shared variable and signals the condition variable. The main thread waits until the shared value becomes 1, which prevents a race condition and guarantees the output order.
+
+\textbf{Analysis:} Without synchronization, the second line could print before the first line or the shared variable could be read too early.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 2: SpaceX Problems}
+\lstinputlisting{spacex.c}
+\textbf{Explanation:} The counter thread holds the mutex while counting down and signals the announcer when the countdown reaches 0. The announcer waits on the condition variable until that happens.
+
+\textbf{Analysis:} This ensures the touchdown message prints only after 3, 2, 1.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 3: I Love You, Unconditionally!}
+\lstinputlisting{love.c}
+\textbf{Explanation:} The helper thread changes the shared variable and signals the main thread. The main thread waits until the value becomes 1, guaranteeing the correct message.
+
+\textbf{Analysis:} The condition variable prevents the main thread from checking the shared value too early.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 4: Locking Up the Floopies}
+\lstinputlisting{floopy.c}
+\textbf{Explanation:} Transfers lock both accounts in a consistent order based on account ID. This avoids circular wait and prevents deadlock.
+
+\textbf{Analysis:} If two threads lock the two accounts in opposite orders, each can block forever waiting on the other lock.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 5: Baking with Condition Variables}
+\lstinputlisting{baking.c}
+\textbf{Explanation:} Separate threads add batter, add eggs, heat the bowl, and eat cake. Condition variables force the proper sequence: ingredients first, then baking, then eating.
+
+\textbf{Analysis:} This avoids invalid states like baking before the ingredients are ready.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 6: Priority Donation in Transfer}
+\lstinputlisting{priority_transfer.c}
+\textbf{Explanation:} The code simulates priority donation by temporarily raising the priority field of locked accounts when a higher-priority transfer thread waits.
+
+\textbf{Analysis:} Priority donation helps explain how priority inversion can be reduced when a low-priority holder blocks a higher-priority thread.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 7: Barrier Synchronization}
+\lstinputlisting{barrier.c}
+\textbf{Explanation:} Each thread reaches the barrier and waits until all threads arrive. The last thread broadcasts a wakeup so all threads can continue.
+
+\textbf{Analysis:} This guarantees that no thread prints ``After barrier'' before every thread has reached the barrier.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 8: Readers-Writers with Priority}
+\lstinputlisting{readers_writers.c}
+\textbf{Explanation:} Readers can run together, but they wait if a writer is active or waiting. Writers wait until there are no readers.
+
+\textbf{Analysis:} Writer priority is enforced by blocking new readers when writers are waiting.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\section{Exercise 9: Thread Pool}
+\lstinputlisting{thread_pool.c}
+\textbf{Explanation:} A fixed set of worker threads repeatedly pulls tasks from a shared queue instead of creating a new thread for every task.
+
+\textbf{Analysis:} This improves efficiency by reusing worker threads and protecting the queue with a mutex and condition variables.
+
+\textbf{Screenshot:} Insert your compilation and execution screenshot here.
+
+\end{document}
